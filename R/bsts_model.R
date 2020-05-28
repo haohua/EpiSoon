@@ -22,16 +22,27 @@
 #'                         bsts::AddAr(ss, y = y, lags = 3)}, ...)},
 #'                     horizon = 7, samples = 10)
 bsts_model <- function(y = NULL, samples = NULL,
+                       prior = NULL,
                        horizon = NULL, model = NULL) {
 
 
   model <- model(list(), y)
 
   ## Fit the model
-  fitted_model <- bsts::bsts(y,
-               state.specification = model,
-               niter = ifelse(samples < 100, 100 + samples, samples * 2),
-               ping = 0)
+  if(is.null(prior)){
+    fitted_model <- bsts::bsts(y,
+                               state.specification = model,
+                               niter = ifelse(samples < 100, 100 + samples, samples * 2),
+                               ping = 0)
+
+  }else {
+    fitted_model <- bsts::bsts(y,
+                               state.specification = model,
+                               prior = prior,
+                               niter = ifelse(samples < 100, 100 + samples, samples * 2),
+                               ping = 0)
+
+  }
 
 
   ## Predict using the model
